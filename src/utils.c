@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "utils.h"
+
 void increase_volume() {
     int res = system("wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+");
     if (res == -1) {

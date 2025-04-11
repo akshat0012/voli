@@ -3,8 +3,8 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "render_text.h"
 #include "config.h"
+#include "render_text.h"
 
 void render_text(xcb_connection_t *conn,
                 xcb_drawable_t wid,

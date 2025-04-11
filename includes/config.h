@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 #define HEIGHT    50
-#define WIDTH     100
+#define WIDTH     110
 
 #define POS_X     10
 #define POS_Y     10

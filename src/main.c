@@ -9,9 +9,10 @@
 
 #include <xcb/xcb.h>
 
-#include "render_text.h"
+#include "enums.h"
 #include "utils.h"
 #include "config.h"
+#include "render_text.h"
 #include "init_freetype.h"
 
 int main() {
@@ -71,7 +72,13 @@ int main() {
     while (1) {
         event = xcb_poll_for_event(connection);
         if (event) {
-            if ((event->response_type & ~0x80) == XCB_KEY_PRESS) {
+
+            if ((event->response_type & ~0x80) == XCB_KEY_RELEASE) {
+                printf("KEY is RELEASED\n");
+                continue;
+            }
+            else if ((event->response_type & ~0x80) == XCB_KEY_PRESS) {
+                printf("KEY is PRESSED\n");
                 xcb_key_press_event_t *kp = (xcb_key_press_event_t *)event;
                 if (kp->detail == VOLUME_UP_KEYCODE) {
                     if (visible) {

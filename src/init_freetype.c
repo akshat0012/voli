@@ -1,8 +1,11 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include "render_text.h"
+#include "init_freetype.h"
+
+#include "enums.h"
 #include "config.h"
+
 
 FT_Context* init_freetype() {
     FT_Context *ctx = malloc(sizeof(FT_Context));
@@ -29,4 +32,3 @@ FT_Context* init_freetype() {
     ctx->set_pixel = 1;
     return ctx;
 }
-
