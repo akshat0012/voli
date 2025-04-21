@@ -30,10 +30,21 @@ int main() {
     
     xcb_window_t wid = xcb_generate_id(connection); 
     uint32_t masks = XCB_CW_BACK_PIXEL | XCB_CW_BORDER_PIXEL | XCB_CW_OVERRIDE_REDIRECT;
-    uint32_t value_list[3];
-    value_list[0] = 0x000000;
-    value_list[1] = BORDER_COLOR;
-    value_list[2] = 1;
+    
+    FT_Context* main_p_fctx = init_freetype();
+
+    bitmap_data** bitmap_holder = malloc(10 * sizeof(bitmap_data*));
+    pre_load_bitmaps (bitmap_holder, main_p_fctx->face);
+
+    FT_Done_Face(main_p_fctx->face);
+    FT_Done_FreeType(main_p_fctx->library);
+    free(main_p_fctx);
+
+    uint32_t* main_p_value_list = malloc(3*sizeof(uint32_t));
+
+    main_p_value_list[0] = 0x000000;
+    main_p_value_list[1] = BORDER_COLOR;
+    main_p_value_list[2] = 1;
     
     xcb_create_window(connection,
                       XCB_COPY_FROM_PARENT,
@@ -47,16 +58,17 @@ int main() {
                       XCB_WINDOW_CLASS_INPUT_OUTPUT,
                       screen->root_visual,
                       masks,
-                      value_list);
+                      main_p_value_list);
 
+    main_p_value_list[0] = 0xFFFFFF;
+    main_p_value_list[1] = 0x000000;
 
-    FT_Context *main_p_fctx = init_freetype();
-                      
-    uint32_t values[] = { 0xFFFFFF, 0x000000 };
     xcb_gcontext_t gc = xcb_generate_id(connection);
-    xcb_create_gc(connection, gc, wid, XCB_GC_FOREGROUND | XCB_GC_BACKGROUND, values);
+    xcb_create_gc(connection, gc, wid, XCB_GC_FOREGROUND | XCB_GC_BACKGROUND, main_p_value_list);
+
+    free(main_p_value_list);
     
-    char text[6];
+    char text[5];
     int size_of_text = sizeof(text);
 
     xcb_grab_key(connection, 1, screen->root, 0, VOLUME_UP_KEYCODE,
@@ -75,17 +87,15 @@ int main() {
 
             if ((event->response_type & ~0x80) == XCB_KEY_RELEASE) {
                 printf("KEY is RELEASED\n");
-                continue;
             }
-            else if ((event->response_type & ~0x80) == XCB_KEY_PRESS) {
+            if ((event->response_type & ~0x80) == XCB_KEY_PRESS) {
                 printf("KEY is PRESSED\n");
                 xcb_key_press_event_t *kp = (xcb_key_press_event_t *)event;
+                if (visible) {
+                    xcb_unmap_window (connection, wid);
+                }
                 if (kp->detail == VOLUME_UP_KEYCODE) {
-                    if (visible) {
-                        xcb_unmap_window (connection, wid);
-                    }
                     xcb_map_window(connection, wid);
-
                     increase_volume();
                     get_volume ( text, 
                                  size_of_text );
@@ -93,7 +103,7 @@ int main() {
                                   wid, 
                                   gc,
                                   screen->root_depth,
-                                  main_p_fctx->face,
+                                  bitmap_holder,
                                   text );
 
                     xcb_flush(connection);
@@ -101,11 +111,7 @@ int main() {
                     visible = 1;
                 }
                 else if (kp->detail == VOLUME_DOWN_KEYCODE) {
-                    if (visible) {
-                        xcb_unmap_window (connection, wid);
-                    }
                     xcb_map_window(connection, wid);
-
                     decrease_volume();
                     get_volume ( text, 
                                  size_of_text );
@@ -113,7 +119,7 @@ int main() {
                                   wid, 
                                   gc,
                                   screen->root_depth,
-                                  main_p_fctx->face,
+                                  bitmap_holder,
                                   text );
 
                     xcb_flush(connection);
@@ -129,12 +135,11 @@ int main() {
             xcb_flush(connection);
             visible = 0;
         }
-        usleep(1000);
+        usleep(10000);
     }
 
-    FT_Done_Face(main_p_fctx->face);
-    FT_Done_FreeType(main_p_fctx->library);
-    free(main_p_fctx);
+
+
 
     xcb_disconnect(connection);
     return 0;

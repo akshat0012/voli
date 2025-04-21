@@ -6,7 +6,6 @@
 #include "enums.h"
 #include "config.h"
 
-
 FT_Context* init_freetype() {
     FT_Context *ctx = malloc(sizeof(FT_Context));
     if (!ctx) return NULL;
