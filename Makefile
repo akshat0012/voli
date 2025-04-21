@@ -4,7 +4,7 @@ SRC_DIR = src
 BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
 INCLUDE_DIR = includes
-TARGET = $(BUILD_DIR)/volume_indicator
+TARGET = $(BUILD_DIR)/voli
 
 PKG_CONFIG = pkg-config
 XCB_CFLAGS = $(shell $(PKG_CONFIG) --cflags xcb)
