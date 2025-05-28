@@ -7,7 +7,6 @@
 
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 
-
 void render_text( xcb_connection_t *conn,
                   xcb_drawable_t wid,
                   xcb_gcontext_t gc,

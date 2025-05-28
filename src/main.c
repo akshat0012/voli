@@ -16,21 +16,23 @@
 #include "init_freetype.h"
 
 int main() {
+    
+
 
     xcb_connection_t *connection = xcb_connect(NULL, NULL);
     if (xcb_connection_has_error(connection)) {
         printf("Error: Can't connect to X server.\n");
         return -1;
     }
-    
+
     const xcb_setup_t *setup = xcb_get_setup(connection);
     xcb_screen_iterator_t iter = xcb_setup_roots_iterator(setup);
     xcb_screen_t *screen = iter.data;
     xcb_window_t root = screen->root;
-    
+
     xcb_window_t wid = xcb_generate_id(connection); 
     uint32_t masks = XCB_CW_BACK_PIXEL | XCB_CW_BORDER_PIXEL | XCB_CW_OVERRIDE_REDIRECT;
-    
+
     FT_Context* main_p_fctx = init_freetype();
 
     bitmap_data** bitmap_holder = malloc(10 * sizeof(bitmap_data*));
@@ -45,7 +47,9 @@ int main() {
     main_p_value_list[0] = 0x000000;
     main_p_value_list[1] = BORDER_COLOR;
     main_p_value_list[2] = 1;
-    
+
+
+
     xcb_create_window(connection,
                       XCB_COPY_FROM_PARENT,
                       wid,
@@ -67,7 +71,7 @@ int main() {
     xcb_create_gc(connection, gc, wid, XCB_GC_FOREGROUND | XCB_GC_BACKGROUND, main_p_value_list);
 
     free(main_p_value_list);
-    
+
     char text[5];
     int size_of_text = sizeof(text);
 
@@ -86,10 +90,9 @@ int main() {
         if (event) {
 
             if ((event->response_type & ~0x80) == XCB_KEY_RELEASE) {
-                printf("KEY is RELEASED\n");
+                continue;
             }
             if ((event->response_type & ~0x80) == XCB_KEY_PRESS) {
-                printf("KEY is PRESSED\n");
                 xcb_key_press_event_t *kp = (xcb_key_press_event_t *)event;
                 if (visible) {
                     xcb_unmap_window (connection, wid);
@@ -137,8 +140,6 @@ int main() {
         }
         usleep(10000);
     }
-
-
 
 
     xcb_disconnect(connection);

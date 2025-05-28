@@ -8,7 +8,7 @@
 #define POS_Y     10
 
 #define FONT_SIZE 30
-#define FONT      "/usr/share/fonts/TTF/IosevkaSS06-Regular.ttc"
+#define FONT      "/usr/share/fonts/Adwaita/AdwaitaSans-Italic.ttf"
 
 #define TEXT_COLOR 0xFF0000
 #define BORDER_COLOR 0xFF0000

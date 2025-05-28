@@ -31,9 +31,8 @@ void pre_load_bitmaps ( bitmap_data**  bitmap_holder,
                 bitmap_holder[i]->data[y * bitmap->width + x] = bitmap->buffer[y * bitmap->width + x] ? 1 : 0;
             }
         }
-        printf("Loading %d done\n", i);
+        /*printf("Loading %d done\n", i);*/
     }
-    return ;
 }
 
 void increase_volume() {
@@ -54,7 +53,7 @@ void decrease_volume() {
     }
 }
 
-
+// TODO :: remove this function and somehow use libpulse to fetch volume
 void get_volume(char* text, int size) {
     FILE* fp = popen("pactl get-sink-volume @DEFAULT_SINK@", "r");
     if (!fp) return ;
